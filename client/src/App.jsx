@@ -1,12 +1,30 @@
-import {Routes , Route} from 'react-router-dom'
-import Product from './assets/pages/Product';
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Toaster } from "react-hot-toast";
+import AuthPage from "./Pages/AuthPage";
+import Dashboard from "./Pages/Dashboard";
+import Navbar from "./components/Navbar";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-function App() {
-  return (
-    <div>
-      <Product />
-    </div>
-  )
-}
+const App = () => (
+  <BrowserRouter>
+    <Navbar />
+    <Toaster position="top-right" />
 
-export default App
+    <Routes>
+      <Route path="/" element={<Navigate to="/login" replace />} />
+      <Route path="/login" element={<AuthPage initialMode="login" />} />
+      <Route path="/register" element={<AuthPage initialMode="register" />} />
+      <Route
+        path="/dashboard"
+        element={
+          <ProtectedRoute>
+            <Dashboard />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/login" replace />} />
+    </Routes>
+  </BrowserRouter>
+);
+
+export default App;

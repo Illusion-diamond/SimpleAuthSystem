@@ -1,22 +1,44 @@
 import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
 import connectDB from './config/db.js';
-import userRoutes from './Routes/userRoutes.js';
-import cors from "cors";
+import authRoutes from './routes/authRoutes.js';
 
-const app = express();
-app.use(cors());
-const PORT = 5000;
-
+dotenv.config();
 connectDB();
 
-//middleware
+
+const app = express();
+const PORT = process.env.PORT || 5000;
+
 app.use(express.json());
-app.use('/api/users', userRoutes);
 
+const allowedOrigins = [
+  'http://localhost:5173',
+  'http://localhost:3000',
+];
 
-//Api end points
+app.use(cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+}));
+
+app.use('/api/auth', authRoutes);
 app.get('/', (req, res) => {
-  res.send('Hello World');
+    res.send('API is running...');
+});
+
+app.use((err, req, res, next) => {
+  res.status(err.status || 500).json({
+    success: false,
+    message: err.message || "Server Error",
+  });
 });
 
 app.listen(PORT, () => {
