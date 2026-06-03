@@ -3,31 +3,24 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
 import authRoutes from './routes/authRoutes.js';
-
-dotenv.config();
-connectDB();
-
+import http from 'http';
+import { Server } from 'socket.io';
+import "dotenv/config";
 
 const app = express();
-const PORT = process.env.PORT || 5000;
+const server = http.createServer(app);
+
+export const io = new Server(server, {
+  cors: {
+    origin: 'http://localhost:5173',
+    credentials: true,
+  },
+});
 
 app.use(express.json());
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:3000',
-];
+await connectDB();
 
-app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-    callback(new Error('Not allowed by CORS'));
-  },
-  credentials: true,
-}));
 
 app.use('/api/auth', authRoutes);
 app.get('/', (req, res) => {
@@ -40,7 +33,10 @@ app.use((err, req, res, next) => {
     message: err.message || "Server Error",
   });
 });
-
-app.listen(PORT, () => {
-  console.log(`Server is running on port ${PORT}`);
-});
+if (process.env.NODE_ENV !== "production") {
+    const PORT = process.env.PORT || 5000;
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`);
+    });
+}
+export default app;
