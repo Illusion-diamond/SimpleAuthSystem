@@ -12,8 +12,8 @@ const App = () => (
 
     <Routes>
       <Route path="/" element={<Navigate to="/login" replace />} />
-      <Route path="/login" element={<AuthPage initialMode="login" />} />
-      <Route path="/register" element={<AuthPage initialMode="register" />} />
+      <Route path="/login" element={<AuthPage/>} />
+      <Route path="/register" element={<AuthPage/>} />
       <Route
         path="/dashboard"
         element={
