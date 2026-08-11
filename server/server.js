@@ -23,7 +23,7 @@ methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
 // Socket.IO
 export const io = new Server(server, {
 cors: {
-origin: 'http://localhost:5173',
+origin: "https://simpleauthsystem-1.onrender.com",
 credentials: true,
 },
 });
